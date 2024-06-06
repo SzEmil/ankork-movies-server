@@ -300,3 +300,10 @@ export const QUERY_VECTOR = [
   0.010827683, -0.02373262, -0.01672189, 0.01704646, -0.033028327, -0.023446998,
   0.013800751, -0.0025543724,
 ];
+
+export const CODE =
+  `await client.connect();
+  const database = client.db('sample_mflix');
+  const coll = database.collection('embedded_movies');
+  const agg = [{ $vectorSearch: {index: 'vector_embedded_movies',path: 'plot_embedding',filter: {year: { $lt: 1950,},},queryVector: vector,numCandidates: 150,limit: 10,},},{$project: {_id: 0, title: 1, plot: 1,score: { $meta: 'vectorSearchScore', }, },},]; 
+  const result = await coll.aggregate(agg).toArray();`;

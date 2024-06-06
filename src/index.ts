@@ -2,72 +2,36 @@ import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import { MongoClient } from 'mongodb';
 import { QUERY_VECTOR } from './constants';
+import router from './api/api';
+import cors from 'cors';
 
 dotenv.config();
 
 const app: Express = express();
+app.use(express.json());
+app.use(cors());
 const port = process.env.PORT || 3000;
 
-app.get('/', (req: Request, res: Response) => {
-  run().catch(console.dir);
-  res.send('Express + TypeScript Server!');
+app.use('/api', router);
+
+app.use((_, res, __) => {
+  res.status(404).json({
+    status: 'error',
+    code: 404,
+    message: 'Use api on routes: /api/',
+    data: 'Not found',
+  });
 });
 
-const uri = process.env.MONGO_DB_URL!;
-
-const client = new MongoClient(uri);
-
-async function run() {
-  try {
-    await client.connect();
-    // set namespace
-    console.log('start funkcji');
-    const database = client.db('sample_mflix');
-
-    const coll = database.collection('embedded_movies');
-    // define pipeline
-    const agg = [
-      {
-        $vectorSearch: {
-          index: 'vector_embedded_movies',
-          path: 'plot_embedding',
-          filter: {
-            $and: [
-              {
-                year: {
-                  $lt: 1975,
-                },
-              },
-            ],
-          },
-          queryVector: QUERY_VECTOR,
-          numCandidates: 150,
-          limit: 10,
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          title: 1,
-          plot: 1,
-          year: 1,
-          score: {
-            $meta: 'vectorSearchScore',
-          },
-        },
-      },
-    ];
-    // run pipeline
-
-    const result = coll.aggregate(agg);
-
-    // print results
-
-    await result.forEach(doc => console.dir(JSON.stringify(doc)));
-  } finally {
-    await client.close();
-  }
-}
+app.use((err: Error, _b_: any, res: Response, _a_: any) => {
+  console.log(err.stack);
+  res.status(500).json({
+    status: 'fail',
+    code: 500,
+    message: err.message,
+    data: 'Internal Server Error',
+  });
+});
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
