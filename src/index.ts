@@ -9,10 +9,11 @@ const app: Express = express();
 const port = process.env.PORT || 3000;
 
 app.get('/', (req: Request, res: Response) => {
+  run().catch(console.dir);
   res.send('Express + TypeScript Server!');
 });
 
-const uri = '<connection-string>';
+const uri = process.env.MONGO_DB_URL!;
 
 const client = new MongoClient(uri);
 
@@ -20,7 +21,7 @@ async function run() {
   try {
     await client.connect();
     // set namespace
-
+    console.log('start funkcji');
     const database = client.db('sample_mflix');
 
     const coll = database.collection('embedded_movies');
@@ -28,7 +29,7 @@ async function run() {
     const agg = [
       {
         $vectorSearch: {
-          index: 'vector_index',
+          index: 'vector_embedded_movies',
           path: 'plot_embedding',
           filter: {
             $and: [
@@ -67,8 +68,6 @@ async function run() {
     await client.close();
   }
 }
-
-run().catch(console.dir);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
