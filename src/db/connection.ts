@@ -1,22 +1,27 @@
-import { MongoClient, ServerApiVersion } from "mongodb";
+import { MongoClient, ServerApiVersion } from 'mongodb';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const URI = process.env.MONGO_DB_URL || "";
-const client = new MongoClient(URI, {
+const uri = process.env.MONGO_DB_URL!;
+
+export const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
-    strict: true,
+    strict: false,
     deprecationErrors: true,
   },
 });
 
-try {
-  await client.connect();
-  await client.db("admin").command({ ping: 1 });
-  console.log("Pinged your deployment. You successfully connected to MongoDB!");
-} catch (err) {
-  console.error(err);
+
+export async function checkMongoDBHealth() {
+  try {
+    const client = await MongoClient.connect(uri);
+    await client.db("admin").command({ ping: 1 });
+    await client.close();
+    console.log('[MongoDB]: Połączenie z bazą danych pomyślne');
+    return true;
+  } catch (err) {
+    console.error('[MongoDB]: Błąd połączenia z bazą danych:', err);
+    return false;
+  }
 }
-
-let db = client.db("employees");
-
-export default db;

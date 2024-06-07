@@ -8,3 +8,11 @@ export enum ReqParams {
   html = 'html',
   json = 'json',
 }
+
+export enum Database {
+  sampleMflix = 'sample_mflix',
+}
+
+export enum DbCollection {
+  embededMovies = 'embedded_movies',
+}

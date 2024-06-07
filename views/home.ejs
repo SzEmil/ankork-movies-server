@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Home Page</title>
+
+    <style type="text/css" media="screen">
+      body {
+        background-color: skyblue;
+        text-decoration-color: white;
+        font-size: 18px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <center><h2>Hello AnkorK!</h2></center>
+    <p>
+      Use <b>/api/movies/html</b> or <b>/api/movies/json</b> to <b>GET</b> task
+      result with example proveded vector or You can specify body in
+      <b>POST</b> request using <b>POSTMAN</b> or other tool. 
+    </p>
+    <p>EXAMPLE for POSTMAN: send request to api: <%=appUrl%>/movies/json body:
+      {"vector": "[0.008730955, -0.005955875, 0.0070237126, -0.0154106235, 0.02300558]"} to send custom vector into server.</p>
+  </body>
+</html>

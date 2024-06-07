@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Movies</title>
+
+    <style type="text/css" media="screen">
+      body {
+        background-color: rgba(152, 210, 233, 0.842);
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 80%;
+        margin: 0 auto;
+      }
+
+      th,
+      td {
+        border: 1px solid #aaaaaa;
+        padding: 8px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+      }
+
+      h1,
+      h2 {
+        margin: 1em 0;
+      }
+
+      a {
+        color: red;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+      .container {
+        max-width: 1440px;
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <center><h2>Movies in HTML Format</h2></center>
+      <a href="/api/movies/json"
+        >Change to JSON format with static example vector</a
+      >
+      <h1>Movies Data:</h1>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Plot</th>
+            <th>Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for (const movie of result) { %>
+          <tr>
+            <td><%= movie.title %></td>
+            <td><%= movie.plot %></td>
+            <td><%= movie.score %></td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+      <div>
+        <h2>More</h2>
+        <p>
+          You can also send custom vector using POST request and tool like
+          <b>POSTMAN</b> to url <b>/api/movies/html</b> or
+          <b>/api/movies/json</b> with specific body
+        </p>
+        <p>
+          EXAMPLE for POSTMAN: send request to api:
+          <b><%=appUrl%>/movies/json</b> with body: {"vector": "[0.008730955,
+          -0.005955875, 0.0070237126, -0.0154106235, 0.02300558]"} to send
+          custom vector into server.
+        </p>
+      </div>
+
+      <div class="code">
+        <h2>MongoDb search code:</h2>
+        <a href="https://github.com/SzEmil/ankork-movies-server" target="_blank"
+          >->Click me to check full code<-</a
+        >
+        <pre><code>
+            export const getMoviesData = async (req: Request) => {
+              const vector =
+                Object.keys(req.body).length === 0 ? QUERY_VECTOR : req.body.vector;
+            
+              if (!Array.isArray(vector)) {
+                throw new Error('Invalid vector format. Vector must be an array.');
+              }
+            
+              try {
+                await client.connect();
+                const database = client.db(Database.sampleMflix);
+            
+                const coll = database.collection(DbCollection.embededMovies);
+            
+                const agg = [
+                  {
+                    $vectorSearch: {
+                      index: 'vector_embedded_movies',
+                      path: 'plot_embedding',
+                      filter: {
+                        year: {
+                          $lt: 1950,
+                        },
+                      },
+                      queryVector: vector,
+                      numCandidates: 150,
+                      limit: 10,
+                      sort: { score: 1 },
+                    },
+                  },
+                  {
+                    $project: {
+                      _id: 0,
+                      title: 1,
+                      plot: 1,
+                      score: {
+                        $meta: 'vectorSearchScore',
+                      },
+                    },
+                  },
+                ];
+            
+                return await coll.aggregate(agg).toArray();
+              } catch (error) {
+                console.error(error);
+              } finally {
+                await client.close();
+              }
+            };      
+            </code></pre>
+      </div>
+    </div>
+  </body>
+</html>

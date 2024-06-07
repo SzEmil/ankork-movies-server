@@ -301,9 +301,53 @@ export const QUERY_VECTOR = [
   0.013800751, -0.0025543724,
 ];
 
-export const CODE =
-  `await client.connect();
-  const database = client.db('sample_mflix');
-  const coll = database.collection('embedded_movies');
-  const agg = [{ $vectorSearch: {index: 'vector_embedded_movies',path: 'plot_embedding',filter: {year: { $lt: 1950,},},queryVector: vector,numCandidates: 150,limit: 10,},},{$project: {_id: 0, title: 1, plot: 1,score: { $meta: 'vectorSearchScore', }, },},]; 
-  const result = await coll.aggregate(agg).toArray();`;
+export const CODE = `export const getMoviesData = async (req: Request) => {
+  const vector =
+    Object.keys(req.body).length === 0 ? QUERY_VECTOR : req.body.vector;
+
+  if (!Array.isArray(vector)) {
+    throw new Error('Invalid vector format. Vector must be an array.');
+  }
+
+  try {
+    await client.connect();
+    const database = client.db(Database.sampleMflix);
+
+    const coll = database.collection(DbCollection.embededMovies);
+
+    const agg = [
+      {
+        $vectorSearch: {
+          index: 'vector_embedded_movies',
+          path: 'plot_embedding',
+          filter: {
+            year: {
+              $lt: 1950,
+            },
+          },
+          queryVector: vector,
+          numCandidates: 150,
+          limit: 10,
+          sort: { score: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          title: 1,
+          plot: 1,
+          score: {
+            $meta: 'vectorSearchScore',
+          },
+        },
+      },
+    ];
+
+    return await coll.aggregate(agg).toArray();
+  } catch (error) {
+    console.error(error);
+  } 
+  finally {
+    await client.close();
+  }
+};`;

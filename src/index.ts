@@ -1,13 +1,13 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
-import { MongoClient } from 'mongodb';
-import { QUERY_VECTOR } from './constants';
 import router from './api/api';
 import cors from 'cors';
+import { checkMongoDBHealth } from './db/connection';
 
 dotenv.config();
 
 const app: Express = express();
+app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(cors());
 const port = process.env.PORT || 3000;
@@ -33,6 +33,12 @@ app.use((err: Error, _b_: any, res: Response, _a_: any) => {
   });
 });
 
-app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+checkMongoDBHealth().then(async (healthy) => {
+  if (healthy) {
+    app.listen(port, () => {
+      console.log(`[server]: Serwer uruchomiony na porcie :${port}`);
+    });
+  } else {
+    console.error('[Server]: Błąd połączenia z MongoDB. Uruchamianie serwera wstrzymane.');
+  }
 });

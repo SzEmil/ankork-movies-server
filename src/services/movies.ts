@@ -1,5 +1,6 @@
-import { MongoClient } from 'mongodb';
 import { QUERY_VECTOR } from '../constants';
+import { Database, DbCollection } from '../types';
+import { client } from '../db/connection';
 
 type Request = {
   body: {
@@ -10,14 +11,15 @@ export const getMoviesData = async (req: Request) => {
   const vector =
     Object.keys(req.body).length === 0 ? QUERY_VECTOR : req.body.vector;
 
-  const uri = process.env.MONGO_DB_URL!;
-  const client = new MongoClient(uri);
+  if (!Array.isArray(vector)) {
+    throw new Error('Invalid vector format. Vector must be an array.');
+  }
 
   try {
     await client.connect();
-    const database = client.db('sample_mflix');
+    const database = client.db(Database.sampleMflix);
 
-    const coll = database.collection('embedded_movies');
+    const coll = database.collection(DbCollection.embededMovies);
 
     const agg = [
       {
@@ -47,10 +49,11 @@ export const getMoviesData = async (req: Request) => {
       },
     ];
 
-    return await coll.aggregate(agg).toArray()
+    return await coll.aggregate(agg).toArray();
   } catch (error) {
     console.error(error);
-  } finally {
+  } 
+  finally {
     await client.close();
   }
 };
