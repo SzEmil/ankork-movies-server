@@ -85,16 +85,22 @@
       <div>
         <h2>More</h2>
         <p>
-          You can also send custom vector using POST request and tool like
-          <b>POSTMAN</b> to url <b>/api/movies/html</b> or
-          <b>/api/movies/json</b> with specific body
+          **Example for Postman:** Send a request to the API endpoint: <%= appUrl
+          %>/movies/json with a body containing:
+          <br />
+          {"vector": [0.008730955, -0.005955875, 0.0070237126, -0.0154106235,
+          0.02300558...]}
         </p>
-        <p>
-          EXAMPLE for POSTMAN: send request to api:
-          <b><%=appUrl%>/movies/json</b> with body: {"vector": [0.008730955,
-          -0.005955875, 0.0070237126, -0.0154106235, 0.02300558...]} to send
-          custom vector into server.
-        </p>
+        <p>You should see response like this</p>
+        <pre><code>status	"success",
+          code:	200,
+          body: {
+            data: {
+              result […],
+            },
+            code	"export const getMoviesData = async (req: Request) => { const vector =  ...",
+            returnToHtml	"/api/movies/html"
+          }</code></pre>
       </div>
 
       <div class="code">
