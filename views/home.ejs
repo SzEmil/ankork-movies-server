@@ -5,21 +5,61 @@
 
     <style type="text/css" media="screen">
       body {
-        background-color: skyblue;
-        text-decoration-color: white;
+        background-color: rgba(176, 219, 236, 0.774);
         font-size: 18px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0;
+      }
+
+      .container {
+        max-width: 1440px;
+        width: 100%;
+        padding: 20px;
+      }
+
+      h2 {
+        text-align: center;
       }
     </style>
   </head>
 
   <body>
-    <center><h2>Hello AnkorK!</h2></center>
-    <p>
-      Use <b>/api/movies/html</b> or <b>/api/movies/json</b> to <b>GET</b> task
-      result with example proveded vector or You can specify body in
-      <b>POST</b> request using <b>POSTMAN</b> or other tool. 
-    </p>
-    <p>EXAMPLE for POSTMAN: send request to api: <%=appUrl%>/movies/json body:
-      {"vector": "[0.008730955, -0.005955875, 0.0070237126, -0.0154106235, 0.02300558]"} to send custom vector into server.</p>
+    <div class="container">
+      <h2>Hello AnkorK! I'm Emil Szymczyk</h2>
+      <h3>How use it</h3>
+      <p>
+        Use <a href="/api/movies/html">/api/movies/html</a> or
+        <a href="/api/movies/json">/api/movies/json</a> to **retrieve** task
+        results with the provided example vector, or you can specify a custom
+        body in a **POST** request using **Postman** or another tool.
+      </p>
+      <p>
+        **Example for Postman:** Send a request to the API endpoint: <%= appUrl
+        %>/movies/json with a body containing:
+        <br />
+        {"vector": [0.008730955, -0.005955875, 0.0070237126, -0.0154106235,
+        0.02300558...]}
+      </p>
+      <p>You should see response like this</p>
+      <pre><code>status	"success",
+        code:	200,
+        body: {
+          data: {
+            result […],
+          },
+          code	"export const getMoviesData = async (req: Request) => { const vector =  ...",
+          returnToHtml	"/api/movies/html"
+        }</code></pre>
+      <p>Used Technologies:</p>
+      <ul>
+        <li>Node.js</li>
+        <li>Express</li>
+        <li>TypeScript</li>
+        <li>MongoDB</li>
+      </ul>
+    </div>
   </body>
 </html>

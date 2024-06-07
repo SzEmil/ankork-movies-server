@@ -33,12 +33,16 @@ app.use((err: Error, _b_: any, res: Response, _a_: any) => {
   });
 });
 
-checkMongoDBHealth().then(async (healthy) => {
+checkMongoDBHealth().then(async healthy => {
   if (healthy) {
     app.listen(port, () => {
-      console.log(`[server]: Serwer uruchomiony na porcie :${port}`);
+      console.log(`[server]: Server running on the port
+
+ :${port}`);
     });
   } else {
-    console.error('[Server]: Błąd połączenia z MongoDB. Uruchamianie serwera wstrzymane.');
+    console.error(
+      '[Server]: Error connecting to MongoDB. Server startup paused'
+    );
   }
 });

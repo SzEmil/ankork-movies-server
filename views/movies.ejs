@@ -5,7 +5,7 @@
 
     <style type="text/css" media="screen">
       body {
-        background-color: rgba(152, 210, 233, 0.842);
+        background-color: rgba(176, 219, 236, 0.774);
         font-family: Arial, sans-serif;
         font-size: 16px;
         width: 100%;
@@ -31,6 +31,9 @@
         background-color: #f2f2f2;
         font-weight: bold;
       }
+      tr{
+        background-color: #ffffffb2;
+      }
 
       h1,
       h2 {
@@ -55,6 +58,7 @@
   <body>
     <div class="container">
       <center><h2>Movies in HTML Format</h2></center>
+      <a href="/api">Home</a><br/>
       <a href="/api/movies/json"
         >Change to JSON format with static example vector</a
       >
@@ -87,8 +91,8 @@
         </p>
         <p>
           EXAMPLE for POSTMAN: send request to api:
-          <b><%=appUrl%>/movies/json</b> with body: {"vector": "[0.008730955,
-          -0.005955875, 0.0070237126, -0.0154106235, 0.02300558]"} to send
+          <b><%=appUrl%>/movies/json</b> with body: {"vector": [0.008730955,
+          -0.005955875, 0.0070237126, -0.0154106235, 0.02300558...]} to send
           custom vector into server.
         </p>
       </div>

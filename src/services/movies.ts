@@ -50,10 +50,9 @@ export const getMoviesData = async (req: Request) => {
     ];
 
     return await coll.aggregate(agg).toArray();
-  } catch (error) {
-    console.error(error);
-  } 
-  finally {
+  } catch (error: any) {
+    throw new Error(error);
+  } finally {
     await client.close();
   }
 };
